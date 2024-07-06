@@ -1,10 +1,30 @@
-Backend   ---> for database i used https://render.com/ first I used Avian but it gets error while migrating prisma
-          ---> prisma accelerate for connection pooling
-          ---> we get two database url one from render and one from prisma accelerate put prisma accelerate url in wrangler.toml file and render url in .env file
-          ----> then use prisma migrate after that prisma generate 
+## Backend
 
-Common  ----> it is monorepo i used the 100xdev/zod validation from npm
+### Database Setup
 
-Frontend --> used vite for initialization
-          
-          
+- **Hosting**: The backend database is hosted on [Render](https://render.com/). Initially attempted with Avian but encountered migration errors with Prisma.
+
+### Prisma Accelerate
+
+- **Connection Pooling**: Utilizing Prisma Accelerate for optimized database connection pooling.
+
+### Configuration
+
+- **Database URLs**:
+  - Prisma Accelerate URL: Configure in `wrangler.toml`.
+    ```toml
+    # wrangler.toml
+    prisma_accelerate_url = "<your_prisma_accelerate_url>"
+    ```
+  - Render URL: Store in `.env` file for local and deployment configurations.
+    ```dotenv
+    # .env
+    DATABASE_URL="<your_render_database_url>"
+    ```
+
+### Deployment Steps
+
+1. **Database Migration**: Use `prisma migrate` for managing schema migrations after any schema changes.
+  
+   ```bash
+   npx prisma migrate dev --name initial --preview-feature
