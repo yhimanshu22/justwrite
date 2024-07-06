@@ -27,4 +27,10 @@
 1. **Database Migration**: Use `prisma migrate` for managing schema migrations after any schema changes.
   
    ```bash
-   npx prisma migrate dev --name initial --preview-feature
+   npx prisma migrate dev --name initial 
+2. ```bash
+   npx prisma generate --no-engine
+3. ```bash
+   npm run deploy   
+
+   
