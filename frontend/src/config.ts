@@ -1,1 +1,1 @@
-export const BACKEND_URL = " https://medium.himu09854.workers.dev"
+export const BACKEND_URL = "https://justright.himu09854.workers.dev/"
