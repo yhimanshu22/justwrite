@@ -1,4 +1,6 @@
 ## Backend
+https://justwrite-pugps97gm-himanshus-projects-928ee6dc.vercel.app/signup  frontend deployed
+
 
 ### Database Setup
 
