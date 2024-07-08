@@ -49,6 +49,3 @@ Check the app: [JustWrite](https://justwrite-pugps97gm-himanshus-projects-928ee6
    
    ```bash
    npm run deploy
- 
-   
-   
