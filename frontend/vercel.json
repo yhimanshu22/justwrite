@@ -3,3 +3,22 @@
     { "source": "/(.*)", "destination": "/" }
   ]
 }
+{
+    "builds": [
+        {
+            "src": "./backend/src/index.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "./frotend/build", 
+            "use": "@vercel/static"
+        }
+    ],
+   
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/backend/index.js"
+        }
+    ]
+}
