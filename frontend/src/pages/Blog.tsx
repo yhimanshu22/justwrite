@@ -6,13 +6,14 @@ import { useParams } from "react-router-dom";
 
 // atomFamilies/selectorFamilies
 export const Blog = () => {
+
     const { id } = useParams();
     const { loading, blog } = useBlog({
         id: id || ""
     });
 
     if (loading || !blog) {
-        return <div>
+        return <div className=" dark:bg-slate-800">
             <Appbar />
 
             <div className="h-screen flex flex-col justify-center">
@@ -23,7 +24,7 @@ export const Blog = () => {
             </div>
         </div>
     }
-    return <div>
+    return <div className=" dark:bg-slate-800">
         <FullBlog blog={blog} />
     </div>
 }

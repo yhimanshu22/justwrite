@@ -7,7 +7,7 @@ export const Blogs = () => {
     const { loading, blogs } = useBlogs();
 
     if (loading) {
-        return <div>
+        return <div className=" dark:bg-slate-800">
             <Appbar />
             <div className="flex justify-center">
                 <div>
@@ -21,7 +21,7 @@ export const Blogs = () => {
         </div>
     }
 
-    return <div>
+    return <div className=" dark:bg-slate-800">
         <Appbar />
         <div className="flex justify-center">
             <div>
@@ -30,7 +30,7 @@ export const Blogs = () => {
                     authorName={blog.author.name || "Anonymous"}
                     title={blog.title}
                     content={blog.content}
-                    publishedDate={"2nd Feb 2024"}
+                    publishedDate={"8 July 2024"}
                 />)}
             </div>
         </div>

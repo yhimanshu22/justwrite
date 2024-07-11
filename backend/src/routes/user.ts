@@ -17,6 +17,9 @@ const getPrismaClient = (c: Hono["context"]) => {
   }).$extends(withAccelerate());
 };
 
+
+//signup route----------------------------------->
+
 userRouter.post("/signup", async (c) => {
   const body = await c.req.json();
 
@@ -47,13 +50,21 @@ userRouter.post("/signup", async (c) => {
       c.env.JWT_SECRET
     );
 
-    return c.text(jwt);
+
+    return c.json({
+      message: "Signup successfull",
+      token: jwt
+    });
+
   } catch (e) {
-    console.error("Error creating user:", e);
+    console.error("Error in creating user:", e);
     c.status(500);
     return c.text("Internal server error");
   }
 });
+
+
+//signin route--------------------------->
 
 userRouter.post("/signin", async (c) => {
   const body = await c.req.json();
@@ -91,9 +102,36 @@ userRouter.post("/signin", async (c) => {
       c.env.JWT_SECRET
     );
 
-    return c.text(jwt);
+    return c.json({
+      message: "Signin successfull",
+      token: jwt
+    });
   } catch (e) {
-    console.error("Error signing in:", e);
+    console.error("Error in logging", e);
+    c.status(500);
+    return c.text("Internal server error");
+  }
+});
+
+userRouter.post("/logout", async (c) => {
+  try {
+
+    //if you want to invalidate the token on the server-side:
+    const token = c.req.header.get("authorization")?.split(" ")[1];
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        refreshToken: null,
+      },
+    });
+
+    return c.json({
+      message: "Logout successful",
+    });
+  } catch (e) {
+    console.error("Error in logging out:", e);
     c.status(500);
     return c.text("Internal server error");
   }

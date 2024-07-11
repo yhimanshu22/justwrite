@@ -52,6 +52,5 @@ Check the app: [JustWrite](https://justwrite-m2b91t5fl-yhimanshu220456.vercel.ap
 
 What Features I Added:
 
-1.changes alert to toast library for better error messaging and user experince
-2.logo font change  
-3.  
+1.logo font change  
+2.changes white to dark theme  

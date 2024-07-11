@@ -33,23 +33,29 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
         <div className="flex justify-center">
             <div>
                 <div className="px-10">
-                    <div className="text-3xl font-extrabold">
-                        Create an account
+                    <div style={{ fontFamily: 'Anton' }} className="text-5xl font-extrabold">
+                        Join JustWrite
                     </div>
-                    <div className="text-slate-500">
+                    <div className="text-lg pl-4 text-slate-500">
                         {type === "signin" ? "Don't have an account?" : "Already have an account?"}
-                        <Link className="pl-2 underline" to={type === "signin" ? "/signup" : "/signin"}>
+
+                        <Link to={type === "signin" ? "/signup" : "/signin"}
+                            className="pl-2 underline text-blue-500 hover:text-blue-600">
                             {type === "signin" ? "Sign up" : "Sign in"}
                         </Link>
                     </div>
+
                 </div>
+
                 <div className="pt-8">
-                    {type === "signup" ? <LabelledInput label="Name" placeholder="Himanshu Yadav..." onChange={(e) => {
-                        setPostInputs({
-                            ...postInputs,
-                            name: e.target.value
-                        })
-                    }} /> : null}
+                    {type === "signup" ?
+
+                        <LabelledInput label="Name" placeholder="Himanshu Yadav..." onChange={(e) => {
+                            setPostInputs({
+                                ...postInputs,
+                                name: e.target.value
+                            })
+                        }} /> : null}
                     <LabelledInput label="Username" placeholder="himu09854@gmail.com" onChange={(e) => {
                         setPostInputs({
                             ...postInputs,
@@ -62,7 +68,16 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                             password: e.target.value
                         })
                     }} />
-                    <button onClick={sendRequest} type="button" className="mt-8 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">{type === "signup" ? "Sign up" : "Sign in"}</button>
+                    <button
+                        onClick={sendRequest}
+                        type="button"
+                        className="w-full px-5 py-2.5 text-lg font-medium text-white bg-gray-800 rounded-lg 
+                        focus:outline-none focus:ring-4 focus:ring-gray-300 hover:bg-gray-900 
+                       dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                    >
+                        {type === "signup" ? "Sign up" : "Sign in"}
+                    </button>
+
                 </div>
             </div>
         </div>
@@ -77,8 +92,17 @@ interface LabelledInputType {
 }
 
 function LabelledInput({ label, placeholder, onChange, type }: LabelledInputType) {
-    return <div>
-        <label className="block mb-2 text-sm text-black font-semibold pt-4">{label}</label>
-        <input onChange={onChange} type={type || "text"} id="first_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder={placeholder} required />
-    </div>
+    return (
+        <div className="mb-4">
+            <label className="block text-lg font-semibold text-gray-800">{label}</label>
+            <input
+                onChange={onChange}
+                type={type || "text"}
+                id="first_name"
+                className="bg-gray-100 text-lg border border-gray-300 text-gray-800 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2 px-3 mt-1"
+                placeholder={placeholder}
+                required
+            />
+        </div>
+    );
 }
