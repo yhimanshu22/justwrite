@@ -2,7 +2,7 @@
    
 ## Backend
 
-Check the app: [JustWrite](https://justwrite-pugps97gm-himanshus-projects-928ee6dc.vercel.app/signup)
+Check the app: [JustWrite](https://justwrite-m2b91t5fl-yhimanshu220456.vercel.app/signup)
 
 ### What to do in the Future
 
