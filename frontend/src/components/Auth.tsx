@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { SignupInput } from "@100xdevs/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { toast } from 'react-toastify';
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
@@ -24,7 +25,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
         } catch (error) {
             console.error("Error during signup/signin:", error);
-            alert("Failed to sign up. Please try again later.");
+            toast.error("Failed to sign up. Please try again later.");
         }
     }
 
@@ -43,13 +44,13 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                     </div>
                 </div>
                 <div className="pt-8">
-                    {type === "signup" ? <LabelledInput label="Name" placeholder="Harkirat Singh..." onChange={(e) => {
+                    {type === "signup" ? <LabelledInput label="Name" placeholder="Himanshu Yadav..." onChange={(e) => {
                         setPostInputs({
                             ...postInputs,
                             name: e.target.value
                         })
                     }} /> : null}
-                    <LabelledInput label="Username" placeholder="harkirat@gmail.com" onChange={(e) => {
+                    <LabelledInput label="Username" placeholder="himu09854@gmail.com" onChange={(e) => {
                         setPostInputs({
                             ...postInputs,
                             username: e.target.value

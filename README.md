@@ -49,3 +49,9 @@ Check the app: [JustWrite](https://justwrite-pugps97gm-himanshus-projects-928ee6
    
    ```bash
    npm run deploy
+
+What Features I Added:
+
+1.changes alert to toast library for better error messaging and user experince
+2.logo font change  
+3.  
