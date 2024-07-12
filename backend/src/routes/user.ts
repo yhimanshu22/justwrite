@@ -112,27 +112,3 @@ userRouter.post("/signin", async (c) => {
     return c.text("Internal server error");
   }
 });
-
-userRouter.post("/logout", async (c) => {
-  try {
-
-    //if you want to invalidate the token on the server-side:
-    const token = c.req.header.get("authorization")?.split(" ")[1];
-    await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        refreshToken: null,
-      },
-    });
-
-    return c.json({
-      message: "Logout successful",
-    });
-  } catch (e) {
-    console.error("Error in logging out:", e);
-    c.status(500);
-    return c.text("Internal server error");
-  }
-});
