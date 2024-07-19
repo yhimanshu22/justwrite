@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@100xdevs/medium-common": "^1.0.0",
+    "@google/generative-ai": "^0.15.0",
     "@prisma/client": "^5.16.1",
     "@prisma/extension-accelerate": "^0.6.3",
     "hono": "^4.0.8",
@@ -12,6 +13,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
+    "@types/node": "^20.14.11",
     "wrangler": "^3.25.0"
   }
 }

@@ -9,15 +9,23 @@ export const FullBlog = ({ blog }: { blog: Blog }) => {
             <div className="flex justify-center">
                 <div className="grid grid-cols-12 px-10 w-full pt-12 max-w-screen-xl">
                     <div className="col-span-9 pr-10">
-                        <div className="text-5xl font-extrabold text-white">
+
+                        <div
+                            className="text-5xl font-bold text-white mb-4 shadow-md"
+                            style={{ fontFamily: 'Anton' }}
+                        >
                             {blog.title}
                         </div>
+
+
                         <div className="text-slate-400 pt-2 ">
                             Post on 7th July 2024
                         </div>
-                        <div className="pt-5  text-white text-lg">
+
+                        <div className="text-white text-lg leading-relaxed whitespace-pre-wrap break-words">
                             {blog.content}
                         </div>
+
                     </div>
 
                     <div className="col-span-3 border-l  border-slate-300 pl-6">

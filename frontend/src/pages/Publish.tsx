@@ -24,14 +24,16 @@ export const Publish = () => {
                         placeholder="Title"
                     />
 
-
-                    <TextEditor onChange={(e) => {
-                        setDescription(e.target.value)
-                    }} />
+                    <TextEditor
+                        value={description}
+                        onChange={(e) => {
+                            setDescription(e.target.value);
+                        }}
+                    />
 
                     <button
                         onClick={async () => {
-                            const response = await axios.post(`${BACKEND_URL}/api/v1/blog`, {
+                            const response = await axios.post(`${BACKEND_URL}/api/v1/blog/publish`, {
                                 title,
                                 content: description
                             }, {
@@ -40,19 +42,37 @@ export const Publish = () => {
                                 }
                             });
 
-                            navigate(`/blog/${response.data.id}`)
+                            navigate(`/blog/${response.data.id}`);
                         }}
                         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none mt-4"
                     >
                         Publish Post
                     </button>
+
+                    <button
+                        onClick={async () => {
+                            const response = await axios.post(`${BACKEND_URL}/api/v1/blog/with-ai`, {
+                                title
+                            }, {
+                                headers: {
+                                    Authorization: localStorage.getItem("token")
+                                }
+                            });
+
+                            setDescription(response.data.content); // Update the description with AI-generated content
+                        }}
+                        className="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-3 px-4 rounded-lg focus:outline-none mt-4 mx-4"
+                    >
+                        Generate with AI
+                    </button>
+
                 </div>
             </div>
         </div>
     );
 }
 
-function TextEditor({ onChange }: { onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void }) {
+function TextEditor({ value, onChange }: { value: string; onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void }) {
     return (
         <div className="mt-2">
             <div className="w-full mb-4">
@@ -60,6 +80,7 @@ function TextEditor({ onChange }: { onChange: (e: ChangeEvent<HTMLTextAreaElemen
                     <div className="my-2 rounded-lg w-full">
                         <label className="sr-only">Publish post</label>
                         <textarea
+                            value={value}
                             onChange={onChange}
                             id="editor"
                             rows={8}
@@ -72,7 +93,6 @@ function TextEditor({ onChange }: { onChange: (e: ChangeEvent<HTMLTextAreaElemen
             </div>
         </div>
     );
-
 }
 
 export default Publish;
