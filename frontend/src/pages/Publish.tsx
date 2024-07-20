@@ -35,26 +35,21 @@ export const Publish = () => {
                     <button
                         onClick={async () => {
                             try {
-                                const token = localStorage.getItem("token");
-                                if (!token) {
-                                    notifyError('Token is missing. Please login first.');
-                                    return;
-                                }
-
                                 const response = await axios.post(`${BACKEND_URL}/api/v1/blog/publish`, {
                                     title,
                                     content: description
                                 }, {
                                     headers: {
-                                        Authorization: `Bearer ${token}` // Ensure correct token format
+                                        Authorization: localStorage.getItem("token")
                                     }
                                 });
 
                                 navigate(`/blog/${response.data.id}`);
+
                                 notifySuccess('Post Published Successfully');
 
                             } catch (error) {
-                                console.error("Publish post error:", error); // Log error details
+                                console.error("Publish post error:", error);
                                 if (error.response && error.response.status === 403) {
                                     notifyError('You are not logged in, please login first to post.');
                                 } else {
@@ -80,11 +75,11 @@ export const Publish = () => {
                                     title
                                 }, {
                                     headers: {
-                                        Authorization: `Bearer ${token}` // Ensure correct token format
+                                        Authorization: localStorage.getItem("token")
                                     }
                                 });
 
-                                setDescription(response.data.content); // Update the description with AI-generated content
+                                setDescription(response.data.content); // Update the description with AI
                                 notifySuccess('Content generated successfully.');
 
                             } catch (error) {

@@ -2,8 +2,9 @@ import { createBlogInput, updateBlogInput } from "@100xdevs/medium-common";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
+import { verify } from "hono/jwt";
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { authMiddleware } from "../Authmiddleware";
+//import { authMiddleware } from "../Authmiddleware";
 
 export const blogRouter = new Hono<{
     Bindings: {
@@ -16,7 +17,27 @@ export const blogRouter = new Hono<{
     }
 }>();
 
-blogRouter.post('/*', authMiddleware)
+//blogRouter.post('/*', authMiddleware)
+blogRouter.use("/*", async (c, next) => {
+    const authHeader = c.req.header("authorization") || "";
+    try {
+        const user = await verify(authHeader, c.env.JWT_SECRET);
+        if (user) {
+            c.set("userId", user.id);
+            await next();
+        } else {
+            c.status(403);
+            return c.json({
+                message: "You are not logged in"
+            })
+        }
+    } catch (e) {
+        c.status(403);
+        return c.json({
+            message: "You are not logged in"
+        })
+    }
+});
 
 blogRouter.post('/publish', async (c) => {
     const body = await c.req.json();
@@ -45,7 +66,7 @@ blogRouter.post('/publish', async (c) => {
         id: blog.id
     })
 })
-blogRouter.put('/', authMiddleware, async (c) => {
+blogRouter.put('/', async (c) => {
     const body = await c.req.json();
     const { success } = updateBlogInput.safeParse(body);
     if (!success) {
@@ -159,7 +180,6 @@ blogRouter.get('/top-picks', async (c) => {
     }
 });
 
-export const runtime = 'edge';
 
 // generate with ai------------------->
 blogRouter.post('/with-ai', async (c) => {
