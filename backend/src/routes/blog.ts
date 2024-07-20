@@ -131,6 +131,34 @@ blogRouter.get('/:id', async (c) => {
     }
 })
 
+//top picks ---------------------->>
+// Route to get top picks
+blogRouter.get('/top-picks', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        // Fetch top picks from the database
+        const topPicks = await prisma.blog.findMany({
+            take: 5, // Number of top picks to fetch
+            orderBy: {
+                createdAt: 'desc', // Adjust the ordering as needed
+            },
+            select: {
+                id: true,
+                title: true,
+            },
+        });
+
+        return c.json(topPicks);
+    } catch (error) {
+        console.error("Error fetching top picks:", error);
+        c.status(500);
+        return c.json({ message: "Internal Server Error" });
+    }
+});
+
 export const runtime = 'edge';
 
 // generate with ai------------------->

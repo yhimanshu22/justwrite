@@ -50,10 +50,12 @@ Check the app: [JustWrite](https://justwrite-m2b91t5fl-yhimanshu220456.vercel.ap
    ```bash
    npm run deploy
 
-What Features I Added:
-
-1.logo font change    
-2.changes white to dark theme    
-3.integrate gemini API for blog generation    
-4.added taost Notification  
-5.added logout functionality   
+What Features I Added:  
+1.Logo Font: Updated for a new look.  
+2.Dark Theme: Switched from white to dark mode.  
+3.Gemini API: Integrated for blog generation.  
+4.Toast Notifications: Added for user feedback.  
+5.Logout Functionality: Implemented for secure session exit.  
+6.FullBlog Enhancements:  
+   1.Added dropdown menu on the left.  
+   2.Included Top Picks, Recommended Blogs, and a Reading List on the right.  
