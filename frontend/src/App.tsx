@@ -5,6 +5,7 @@ import { Blog } from './pages/Blog'
 import { Blogs } from "./pages/Blogs";
 import { Publish } from './pages/Publish';
 import { HomePage } from './pages/HomePage';
+import NotificationContainer from './components/Notification';
 
 function App() {
 
@@ -18,7 +19,9 @@ function App() {
           <Route path="/blog/:id" element={<Blog />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/publish" element={<Publish />} />
+
         </Routes>
+        <NotificationContainer />
       </BrowserRouter>
     </>
   )

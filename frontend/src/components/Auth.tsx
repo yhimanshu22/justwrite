@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { SignupInput } from "@100xdevs/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
-import { toast } from 'react-toastify';
+import { notifyError, notifySuccess } from "./Notification";
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
@@ -21,14 +21,21 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${endpoint}`, postInputs);
 
-            const jwt = response.data;
+            const jwt = response.data.token;  // Make sure response.data contains 'token'
             localStorage.setItem("token", jwt);
             navigate("/blogs");
 
+            if (type === "signup") {
+                notifySuccess('Signup Successful');
+            } else {
+                notifySuccess('Signin Successful');
+            }
+
         } catch (error) {
-            console.error("Error during signup/signin:", error);
-            toast.error("Failed to sign up. Please try again later.");
+            console.error("Error during signup/signin:", error);  // It's good practice to log the error for debugging
+            notifyError("Signin/Signup failed. Please try again.");
         }
+
     }
 
     return <div className="h-screen flex justify-center flex-col">

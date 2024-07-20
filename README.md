@@ -52,6 +52,8 @@ Check the app: [JustWrite](https://justwrite-m2b91t5fl-yhimanshu220456.vercel.ap
 
 What Features I Added:
 
-1.logo font change  
-2.changes white to dark theme  
-3.integrate gemini API for blog generation
+1.logo font change    
+2.changes white to dark theme    
+3.integrate gemini API for blog generation    
+4.added taost Notification  
+5.added logout functionality   

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useState } from 'react';
+
 
 // Define the BlogCardProps interface
 interface BlogCardProps {
@@ -49,23 +51,48 @@ export const BlogCard = ({
 };
 
 // Circle component
+
 export function Circle() {
     return (
         <div className="h-1 w-1 rounded-full bg-slate-500 dark:bg-slate-400"></div>
     );
 }
 
-// Avatar component
-export function Avatar({ name, size = "small" }: { name: string, size?: "small" | "big" }) {
+// Avatar component ------------------------------>
+
+export function Avatar({ name, size = "small", onLogout }: { name: string, size?: "small" | "big", onLogout?: () => void }) {
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
     return (
-        <div
-            className={`relative inline-flex items-center justify-center overflow-hidden bg-gray-600 rounded-full ${size === "small" ? "w-6 h-6" : "w-10 h-10"}`}
-        >
-            <span
-                className={`${size === "small" ? "text-xs" : "text-md"} font-extralight text-gray-600 dark:text-gray-300`}
+        <div className="relative">
+            <div
+                className={`relative inline-flex items-center justify-center overflow-hidden
+                     bg-gray-600 rounded-full ${size === "small" ? "w-6 h-6" : "w-10 h-10"} cursor-pointer`}
+
+                onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-                {name[0]}
-            </span>
+                <span
+                    className={`${size === "small" ? "text-xs" : "text-md"} font-extralight 
+                        text-gray-600 dark:text-gray-300`}
+                >
+                    {name[0]}
+                </span>
+            </div>
+
+            {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+
+                    {onLogout && (
+                        <button
+                            onClick={onLogout}
+                            title="Logout"
+                            className="block py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-center"
+                        > Logout
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
