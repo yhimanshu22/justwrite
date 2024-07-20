@@ -26,7 +26,6 @@ export const BlogCard = ({
 }: BlogCardProps) => {
 
     const [isDropdownVisible, setDropdownVisible] = useState(false);
-    const navigate = useNavigate();
 
     const toggleDropdown = () => {
         setDropdownVisible(!isDropdownVisible);
@@ -63,70 +62,12 @@ export const BlogCard = ({
 
                                 <div
                                     className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                    onClick={async (event) => {
-
-                                        event.preventDefault(); // Prevent the default link behavior
-
-                                        try {
-                                            const response = await axios.put(`${BACKEND_URL}/api/v1/blog/update`, {
-                                                headers: {
-                                                    Authorization: `Bearer ${localStorage.getItem("token")}`
-                                                }
-                                            });
-
-                                            // Handle successful response
-                                            if (response.status === 200) {
-                                                navigate(`/blog/${response.data.id}`);
-                                                notifySuccess('Post Updated Successfully');
-                                            } else {
-                                                notifyError('Failed to update the post');
-                                            }
-
-                                        } catch (error) {
-                                            console.log(error);
-                                            notifyError('Error in updating');
-                                        }
-
-                                        setDropdownVisible(false);
-                                    }}
-                                >
-                                    Update
-                                </div>
+                                    onClick={async () => { {/* logic for updates  */ } }}
+                                >Update</div>
                                 <div
                                     className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                    onClick={async (event) => {
-                                        event.preventDefault(); // Prevent the default link behavior
-
-                                        try {
-                                            const response = await axios.post(`${BACKEND_URL}/api/v1/blog/delete`, {
-                                                id // Ensure you have the blog ID available in the context
-                                            }, {
-                                                headers: {
-                                                    Authorization: `Bearer ${localStorage.getItem("token")}`
-                                                }
-                                            });
-
-                                            // Handle successful response
-                                            if (response.status === 200) {
-                                                navigate(`/blogs`);
-                                                notifySuccess('Post Deleted Successfully');
-                                            } else {
-                                                notifyError('Failed to delete the post');
-                                            }
-
-                                        } catch (error) {
-                                            if (error.response && error.response.status === 403) {
-                                                notifyError('You do not have permission to delete this post');
-                                            } else {
-                                                notifyError('An error occurred while trying to delete the post');
-                                            }
-                                        }
-
-                                        setDropdownVisible(false);
-                                    }}
-                                >
-                                    Delete
-                                </div>
+                                    onClick={async () => { {/* logic for delete  */ } }}
+                                >Delete</div>
 
 
 
