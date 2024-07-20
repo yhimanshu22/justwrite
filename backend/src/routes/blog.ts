@@ -17,16 +17,12 @@ export const blogRouter = new Hono<{
 }>();
 
 blogRouter.use("/*", async (c, next) => {
-
     const authHeader = c.req.header("authorization") || "";
-
     try {
         const user = await verify(authHeader, c.env.JWT_SECRET);
-
         if (user) {
             c.set("userId", user.id);
             await next();
-
         } else {
             c.status(403);
             return c.json({
@@ -43,9 +39,7 @@ blogRouter.use("/*", async (c, next) => {
 
 blogRouter.post('/publish', async (c) => {
     const body = await c.req.json();
-
     const { success } = createBlogInput.safeParse(body);
-
     if (!success) {
         c.status(411);
         return c.json({
@@ -54,7 +48,6 @@ blogRouter.post('/publish', async (c) => {
     }
 
     const authorId = c.get("userId");
-
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
@@ -74,9 +67,7 @@ blogRouter.post('/publish', async (c) => {
 
 blogRouter.put('/', async (c) => {
     const body = await c.req.json();
-
     const { success } = updateBlogInput.safeParse(body);
-
     if (!success) {
         c.status(411);
         return c.json({
@@ -104,15 +95,10 @@ blogRouter.put('/', async (c) => {
 })
 
 // Todo: add pagination
-
-//get all blogs------------------------>
-
 blogRouter.get('/bulk', async (c) => {
-
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-
     const blogs = await prisma.blog.findMany({
         select: {
             content: true,
@@ -131,12 +117,8 @@ blogRouter.get('/bulk', async (c) => {
     })
 })
 
-//get a single blog-------------------------->
-
 blogRouter.get('/:id', async (c) => {
-
     const id = c.req.param("id");
-
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
@@ -162,14 +144,12 @@ blogRouter.get('/:id', async (c) => {
             blog
         });
     } catch (e) {
-        c.status(411);
+        c.status(411); // 4
         return c.json({
             message: "Error while fetching blog post"
         });
     }
 })
-
-export const runtime = 'edge';
 
 // generate with ai------------------->
 blogRouter.post('/with-ai', async (c) => {

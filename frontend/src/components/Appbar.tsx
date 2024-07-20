@@ -9,7 +9,15 @@ export const Appbar = () => {
                     style={{ fontFamily: 'Anton' }}>JustWrite</span>
             </Link>
 
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
+                {/* Search Bar */}
+                <div className="relative w-1/3">
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        className="block w-full px-4 py-2 text-gray-900 dark:text-gray-100 border rounded-lg shadow-sm dark:bg-slate-700 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                </div>
 
                 <Link to={`/publish`}>
                     <button type="button" className="px-6 mr-4 text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5">

@@ -54,3 +54,4 @@ What Features I Added:
 
 1.logo font change  
 2.changes white to dark theme  
+3.integrate gemini API for blog generation

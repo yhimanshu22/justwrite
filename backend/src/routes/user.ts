@@ -19,96 +19,75 @@ const getPrismaClient = (c: Hono["context"]) => {
 
 
 //signup route----------------------------------->
-
-userRouter.post("/signup", async (c) => {
+userRouter.post('/signup', async (c) => {
   const body = await c.req.json();
-
-  const { success, error } = signupInput.safeParse(body);
-
+  const { success } = signupInput.safeParse(body);
   if (!success) {
-    c.status(400);
+    c.status(411);
     return c.json({
-      message: "Invalid inputs",
-      error: error?.issues,
-    });
+      message: "Inputs not correct"
+    })
   }
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
 
   try {
-    const prisma = getPrismaClient(c);
     const user = await prisma.user.create({
       data: {
         username: body.username,
         password: body.password,
-        name: body.name,
-      },
-    });
+        name: body.name
+      }
+    })
+    const jwt = await sign({
+      id: user.id
+    }, c.env.JWT_SECRET);
 
-    const jwt = await sign(
-      {
-        id: user.id,
-      },
-      c.env.JWT_SECRET
-    );
-
-
-    return c.json({
-      message: "Signup successfull",
-      token: jwt
-    });
-
+    return c.text(jwt)
   } catch (e) {
-    console.error("Error in creating user:", e);
-    c.status(500);
-    return c.text("Internal server error");
+    console.log(e);
+    c.status(411);
+    return c.text('Invalid')
   }
-});
+})
 
 
-//signin route--------------------------->
-
-userRouter.post("/signin", async (c) => {
+userRouter.post('/signin', async (c) => {
   const body = await c.req.json();
-
-  const { success, error } = signinInput.safeParse(body);
-
+  const { success } = signinInput.safeParse(body);
   if (!success) {
-    c.status(400);
+    c.status(411);
     return c.json({
-      message: "Invalid inputs",
-      error: error?.issues,
-    });
+      message: "Inputs not correct"
+    })
   }
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
 
   try {
-    const prisma = getPrismaClient(c);
     const user = await prisma.user.findFirst({
       where: {
         username: body.username,
         password: body.password,
-      },
-    });
-
+      }
+    })
     if (!user) {
       c.status(403);
       return c.json({
-        message: "Incorrect credentials",
-      });
+        message: "Incorrect creds"
+      })
     }
+    const jwt = await sign({
+      id: user.id
+    }, c.env.JWT_SECRET);
 
-    const jwt = await sign(
-      {
-        id: user.id,
-      },
-      c.env.JWT_SECRET
-    );
-
-    return c.json({
-      message: "Signin successfull",
-      token: jwt
-    });
+    return c.text(jwt)
   } catch (e) {
-    console.error("Error in logging", e);
-    c.status(500);
-    return c.text("Internal server error");
+    console.log(e);
+    c.status(411);
+    return c.text('Invalid')
   }
-});
+})
