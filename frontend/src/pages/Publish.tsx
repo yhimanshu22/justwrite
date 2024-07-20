@@ -35,22 +35,32 @@ export const Publish = () => {
                     <button
                         onClick={async () => {
                             try {
+                                const token = localStorage.getItem("token");
+                                if (!token) {
+                                    notifyError('Token is missing. Please login first.');
+                                    return;
+                                }
+
                                 const response = await axios.post(`${BACKEND_URL}/api/v1/blog/publish`, {
                                     title,
                                     content: description
                                 }, {
                                     headers: {
-                                        Authorization: localStorage.getItem("token")
+                                        Authorization: `Bearer ${token}` // Ensure correct token format
                                     }
                                 });
 
                                 navigate(`/blog/${response.data.id}`);
-                                notifySuccess('Post Published Successfully')
+                                notifySuccess('Post Published Successfully');
 
                             } catch (error) {
-                                notifyError('You are not logged in,Please login first to post ')
+                                console.error("Publish post error:", error); // Log error details
+                                if (error.response && error.response.status === 403) {
+                                    notifyError('You are not logged in, please login first to post.');
+                                } else {
+                                    notifyError('Failed to publish post. Please try again.');
+                                }
                             }
-
                         }}
                         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none mt-4"
                     >
@@ -59,23 +69,32 @@ export const Publish = () => {
 
                     <button
                         onClick={async () => {
-
                             try {
+                                const token = localStorage.getItem("token");
+                                if (!token) {
+                                    notifyError('Token is missing. Please login first.');
+                                    return;
+                                }
+
                                 const response = await axios.post(`${BACKEND_URL}/api/v1/blog/with-ai`, {
                                     title
                                 }, {
                                     headers: {
-                                        Authorization: localStorage.getItem("token")
+                                        Authorization: `Bearer ${token}` // Ensure correct token format
                                     }
                                 });
 
                                 setDescription(response.data.content); // Update the description with AI-generated content
+                                notifySuccess('Content generated successfully.');
 
                             } catch (error) {
-                                notifyError('You are not loggedin,login first to generate')
-
+                                console.error("Generate with AI error:", error); // Log error details
+                                if (error.response && error.response.status === 403) {
+                                    notifyError('You are not logged in, please login first to generate.');
+                                } else {
+                                    notifyError('Failed to generate content. Please try again.');
+                                }
                             }
-
                         }}
                         className="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-3 px-4 rounded-lg focus:outline-none mt-4 mx-4"
                     >

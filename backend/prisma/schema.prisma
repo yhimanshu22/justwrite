@@ -16,10 +16,11 @@ model User {
 }
 
 model Blog {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   authorId  Int
   content   String
   title     String
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
+  published Boolean  @default(false)
+  createdAt DateTime @default(now()) // Added createdAt field
+  author    User     @relation(fields: [authorId], references: [id])
 }

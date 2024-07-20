@@ -2,8 +2,8 @@ import { createBlogInput, updateBlogInput } from "@100xdevs/medium-common";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
-import { verify } from "hono/jwt";
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { authMiddleware } from "../Authmiddleware";
 
 export const blogRouter = new Hono<{
     Bindings: {
@@ -16,26 +16,7 @@ export const blogRouter = new Hono<{
     }
 }>();
 
-blogRouter.use("/*", async (c, next) => {
-    const authHeader = c.req.header("authorization") || "";
-    try {
-        const user = await verify(authHeader, c.env.JWT_SECRET);
-        if (user) {
-            c.set("userId", user.id);
-            await next();
-        } else {
-            c.status(403);
-            return c.json({
-                message: "You are not logged in"
-            })
-        }
-    } catch (e) {
-        c.status(403);
-        return c.json({
-            message: "You are not logged in"
-        })
-    }
-});
+blogRouter.post('/*', authMiddleware)
 
 blogRouter.post('/publish', async (c) => {
     const body = await c.req.json();
@@ -64,66 +45,34 @@ blogRouter.post('/publish', async (c) => {
         id: blog.id
     })
 })
-blogRouter.put('/update', async (c) => {
-    const { id, title, content } = await c.req.json();
-
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
-
-    try {
-        const updatedBlog = await prisma.blog.update({
-            where: { id: Number(id) },
-            data: {
-                title,
-                content,
-            },
-        });
-
-        c.status(200);
-        return c.json({
-            message: 'Blog updated successfully',
-            updatedBlog,
-        });
-    } catch (error) {
-        c.status(500);
-        return c.json({
-            message: 'Error updating blog post',
-            error: error.message,
-        });
-    }
-});
-
-
-//for delete-------------------
-
-blogRouter.delete('/delete', async (c) => {
+blogRouter.put('/', authMiddleware, async (c) => {
     const body = await c.req.json();
+    const { success } = updateBlogInput.safeParse(body);
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs not correct"
+        })
+    }
 
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
+    }).$extends(withAccelerate())
 
-    try {
-        console.log(body.id);
-        const deletedBlog = await prisma.blog.delete({
-            where: { id: Number(body.id) },
-        });
+    const blog = await prisma.blog.update({
+        where: {
+            id: body.id
+        },
+        data: {
+            title: body.title,
+            content: body.content
+        }
+    })
 
-        c.status(200);
-        return c.json({
-            message: 'Blog deleted successfully',
-            deletedBlog,
-        });
-    } catch (error) {
-        c.status(500);
-        return c.json({
-            message: 'Error in deleting blog post',
-            error: error.message,
-        });
-    }
-});
-
+    return c.json({
+        id: blog.id
+    })
+})
 
 // Todo: add pagination
 blogRouter.get('/bulk', async (c) => {
@@ -181,6 +130,8 @@ blogRouter.get('/:id', async (c) => {
         });
     }
 })
+
+export const runtime = 'edge';
 
 // generate with ai------------------->
 blogRouter.post('/with-ai', async (c) => {

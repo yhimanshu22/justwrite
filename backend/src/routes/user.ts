@@ -54,8 +54,11 @@ userRouter.post('/signup', async (c) => {
 
 
 userRouter.post('/signin', async (c) => {
+
   const body = await c.req.json();
+
   const { success } = signinInput.safeParse(body);
+
   if (!success) {
     c.status(411);
     return c.json({
@@ -74,20 +77,49 @@ userRouter.post('/signin', async (c) => {
         password: body.password,
       }
     })
+
     if (!user) {
       c.status(403);
       return c.json({
-        message: "Incorrect creds"
+        message: "Please check your password or username"
       })
     }
+
     const jwt = await sign({
       id: user.id
     }, c.env.JWT_SECRET);
 
     return c.text(jwt)
+
   } catch (e) {
     console.log(e);
     c.status(411);
     return c.text('Invalid')
   }
 })
+
+// Route to get users ----------------------------------->
+userRouter.get('/users/follow', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        username: true
+      }
+    });
+
+    return c.json(users);
+  } catch (e) {
+    console.log(e);
+    c.status(500);
+    return c.json({
+      message: 'Failed to fetch users'
+    });
+  }
+});

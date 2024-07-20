@@ -14,7 +14,6 @@ interface BlogCardProps {
     content: string;
     publishedDate: string;
     id: number;
-    description: string;
 }
 
 // BlogCard component

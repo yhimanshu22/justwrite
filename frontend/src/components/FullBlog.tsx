@@ -2,31 +2,11 @@ import { Blog } from "../hooks";
 import { Appbar } from "./Appbar";
 import { Avatar } from "./BlogCard";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 
 export const FullBlog = ({ blog }: { blog: Blog }) => {
     const navigate = useNavigate();
-    const [usersToFollow, setUsersToFollow] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
 
     const recommendedTags = ["React", "JavaScript", "Devops", "WebDev", "AWS", "Cloudflare", "Machine Learning", "Node.js"];
-
-    useEffect(() => {
-        const fetchUsersToFollow = async () => {
-            try {
-                const response = await axios.get(`${BACKEND_URL}/api/v1/users/follow`);
-                setUsersToFollow(response.data);
-            } catch (error) {
-                console.error("Failed to fetch users:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUsersToFollow();
-    }, []);
 
     return (
         <div className="dark:bg-slate-800 min-h-screen">
