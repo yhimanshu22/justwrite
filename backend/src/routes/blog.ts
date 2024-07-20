@@ -64,35 +64,66 @@ blogRouter.post('/publish', async (c) => {
         id: blog.id
     })
 })
-
-blogRouter.put('/', async (c) => {
-    const body = await c.req.json();
-    const { success } = updateBlogInput.safeParse(body);
-    if (!success) {
-        c.status(411);
-        return c.json({
-            message: "Inputs not correct"
-        })
-    }
+blogRouter.put('/update', async (c) => {
+    const { id, title, content } = await c.req.json();
 
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
+    }).$extends(withAccelerate());
 
-    const blog = await prisma.blog.update({
-        where: {
-            id: body.id
-        },
-        data: {
-            title: body.title,
-            content: body.content
-        }
-    })
+    try {
+        const updatedBlog = await prisma.blog.update({
+            where: { id: Number(id) },
+            data: {
+                title,
+                content,
+            },
+        });
 
-    return c.json({
-        id: blog.id
-    })
-})
+        c.status(200);
+        return c.json({
+            message: 'Blog updated successfully',
+            updatedBlog,
+        });
+    } catch (error) {
+        c.status(500);
+        return c.json({
+            message: 'Error updating blog post',
+            error: error.message,
+        });
+    }
+});
+
+
+//for delete-------------------
+
+blogRouter.delete('/delete', async (c) => {
+    const body = await c.req.json();
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        console.log(body.id);
+        const deletedBlog = await prisma.blog.delete({
+            where: { id: Number(body.id) },
+        });
+
+        c.status(200);
+        return c.json({
+            message: 'Blog deleted successfully',
+            deletedBlog,
+        });
+    } catch (error) {
+        c.status(500);
+        return c.json({
+            message: 'Error in deleting blog post',
+            error: error.message,
+        });
+    }
+});
+
 
 // Todo: add pagination
 blogRouter.get('/bulk', async (c) => {

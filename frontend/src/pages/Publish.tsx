@@ -3,6 +3,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useState } from "react";
+import { notifyError, notifySuccess } from "../components/Notification";
 
 export const Publish = () => {
     const [title, setTitle] = useState("");
@@ -33,16 +34,23 @@ export const Publish = () => {
 
                     <button
                         onClick={async () => {
-                            const response = await axios.post(`${BACKEND_URL}/api/v1/blog/publish`, {
-                                title,
-                                content: description
-                            }, {
-                                headers: {
-                                    Authorization: localStorage.getItem("token")
-                                }
-                            });
+                            try {
+                                const response = await axios.post(`${BACKEND_URL}/api/v1/blog/publish`, {
+                                    title,
+                                    content: description
+                                }, {
+                                    headers: {
+                                        Authorization: localStorage.getItem("token")
+                                    }
+                                });
 
-                            navigate(`/blog/${response.data.id}`);
+                                navigate(`/blog/${response.data.id}`);
+                                notifySuccess('Post Published Successfully')
+
+                            } catch (error) {
+                                notifyError('You are not logged in,Please login first to post ')
+                            }
+
                         }}
                         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none mt-4"
                     >
@@ -51,15 +59,23 @@ export const Publish = () => {
 
                     <button
                         onClick={async () => {
-                            const response = await axios.post(`${BACKEND_URL}/api/v1/blog/with-ai`, {
-                                title
-                            }, {
-                                headers: {
-                                    Authorization: localStorage.getItem("token")
-                                }
-                            });
 
-                            setDescription(response.data.content); // Update the description with AI-generated content
+                            try {
+                                const response = await axios.post(`${BACKEND_URL}/api/v1/blog/with-ai`, {
+                                    title
+                                }, {
+                                    headers: {
+                                        Authorization: localStorage.getItem("token")
+                                    }
+                                });
+
+                                setDescription(response.data.content); // Update the description with AI-generated content
+
+                            } catch (error) {
+                                notifyError('You are not loggedin,login first to generate')
+
+                            }
+
                         }}
                         className="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-3 px-4 rounded-lg focus:outline-none mt-4 mx-4"
                     >
