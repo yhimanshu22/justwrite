@@ -11,7 +11,8 @@ const topics = {
     Nodejs: "React Component goes here",
     Finance: "finance here",
     Career: "finance here",
-    Politics: "politics here"
+    Politics: "politics here",
+    Explore: "explore goes here "
 };
 
 export const HomeTags = () => {

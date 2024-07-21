@@ -17,6 +17,7 @@ import UpdateBlogPage from './pages/UpdateBlog';
 import { Politics } from './tags/Politics';
 import { Finance } from './tags/Finance';
 import { Career } from './tags/Career';
+import { Explore } from './tags/Explore';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/tags/Career" element={<Career />} />
           <Route path="/tags/Finance" element={<Finance />} />
           <Route path="/tags/Politics" element={<Politics />} />
+          <Route path="/tags/Explore" element={<Explore />} />
 
           <Route path="/blog/update/:id" element={<UpdateBlogPage />} />
 
