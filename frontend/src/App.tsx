@@ -14,6 +14,9 @@ import { MachineLearning } from './tags/MachineLearning';
 import { AWS } from './tags/AWS';
 import { Cloudflare } from './tags/Cloudflare';
 import UpdateBlogPage from './pages/UpdateBlog';
+import { Politics } from './tags/Politics';
+import { Finance } from './tags/Finance';
+import { Career } from './tags/Career';
 
 function App() {
 
@@ -27,13 +30,18 @@ function App() {
           <Route path="/blog/:id" element={<Blog />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/publish" element={<Publish />} />
+          {/* -----------------------tags router------------------ */}
           <Route path="/tags/React" element={<React />} />
           <Route path="/tags/JavaScript" element={<JavaScript />} />
           <Route path="/tags/MachineLearning" element={<MachineLearning />} />
           <Route path="/tags/Devops" element={<Devops />} />
-          <Route path="/tags/Node.js" element={<Nodejs />} />
+          <Route path="/tags/Nodejs" element={<Nodejs />} />
           <Route path="/tags/AWS" element={<AWS />} />
           <Route path="/tags/Cloudflare" element={<Cloudflare />} />
+          <Route path="/tags/Career" element={<Career />} />
+          <Route path="/tags/Finance" element={<Finance />} />
+          <Route path="/tags/Politics" element={<Politics />} />
+
           <Route path="/blog/update/:id" element={<UpdateBlogPage />} />
 
         </Routes>

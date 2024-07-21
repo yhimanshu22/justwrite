@@ -103,6 +103,7 @@ const UpdateBlogPage = () => {
                                         throw new Error("Failed to update blog");
                                     }
                                 } catch (error) {
+                                    console.log(error)
                                     console.error("Error updating blog:", error);
                                     notifyError("Failed to update blog. Please try again.");
                                 }
