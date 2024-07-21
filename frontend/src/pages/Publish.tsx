@@ -5,6 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useState } from "react";
 import { notifyError, notifySuccess } from "../components/Notification";
 
+
+interface CustomError extends Error {
+    response?: {
+        status: number;
+    };
+}
+
 export const Publish = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -48,7 +55,8 @@ export const Publish = () => {
 
                                 notifySuccess('Post Published Successfully');
 
-                            } catch (error) {
+                            } catch (e: unknown) {
+                                const error = e as CustomError;
                                 console.error("Publish post error:", error);
                                 if (error.response && error.response.status === 403) {
                                     notifyError('You are not logged in, please login first to post.');
@@ -82,8 +90,9 @@ export const Publish = () => {
                                 setDescription(response.data.content); // Update the description with AI
                                 notifySuccess('Content generated successfully.');
 
-                            } catch (error) {
-                                console.error("Generate with AI error:", error); // Log error details
+                            } catch (e: unknown) {
+                                const error = e as CustomError;
+                                // console.error("Generate with AI error:", error); // Log error details
                                 if (error.response && error.response.status === 403) {
                                     notifyError('You are not logged in, please login first to generate.');
                                 } else {
