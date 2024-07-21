@@ -71,13 +71,14 @@ blogRouter.put('/update/:id', async (c) => {
 
     try {
         // Find the blog to check if it belongs to the user
-        const blog = await prisma.blog.findUnique({
+        const blog = await prisma.blog.findFirst({
             where: {
                 id: id,
+                authorId: userId,
             }
         });
 
-        if (!blog || blog.authorId !== userId) {
+        if (!blog) {
             c.status(403); // Forbidden - User is not authorized to update this blog
             return c.json({
                 message: 'You are not authorized to update this blog.',
@@ -87,11 +88,11 @@ blogRouter.put('/update/:id', async (c) => {
         // Update the blog
         const updatedBlog = await prisma.blog.update({
             where: {
-                id: id,
+                id: body.id
             },
             data: {
                 title: body.title,
-                content: body.content,
+                content: body.content
             }
         });
 

@@ -5,6 +5,7 @@ import { BACKEND_URL } from '../config';
 import { notifyError, notifySuccess } from '../components/Notification';
 import { TextEditor } from './Publish';
 import { Spinner } from '../components/Spinner';
+import { Appbar } from '../components/Appbar';
 
 const UpdateBlogPage = () => {
     const { id } = useParams();
@@ -19,7 +20,7 @@ const UpdateBlogPage = () => {
             try {
                 const response = await axios.get(`${BACKEND_URL}/api/v1/blog/${id}`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        Authorization: `${localStorage.getItem("token")}`,
                     }
                 });
 
@@ -27,8 +28,13 @@ const UpdateBlogPage = () => {
 
                 setTitle(blog.title);
                 setContent(blog.content);
+
+                // Call notifySuccess only once after setting state
+                if (!loading) {
+                    notifySuccess('Blog data fetched successfully');
+                }
+
                 setLoading(false);
-                notifySuccess('Blog data fetched successfully');
 
             } catch (error) {
                 console.error("Error fetching blog:", error);
@@ -38,61 +44,74 @@ const UpdateBlogPage = () => {
         };
 
         fetchBlog();
-    }, [id]);
+    }, [id, loading]); // Added loading to dependency array to handle state updates
+
 
     if (loading) {
-        return <Spinner />;
+        return <div className=" dark:bg-slate-800">
+            <Appbar />
+
+            <div className="h-screen flex flex-col justify-center">
+
+                <div className="flex justify-center">
+                    <Spinner />
+                </div>
+            </div>
+        </div>
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Update Blog</h1>
+        <div className="dark:bg-slate-800 min-h-screen">
+            <Appbar />
 
-            <div className="max-w-screen-lg w-full">
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    type="text"
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg block p-2.5 focus:outline-none"
-                    placeholder="Title"
-                />
-                <TextEditor
-                    value={content}
-                    onChange={(newContent) => setContent(newContent)}
-                />
-                <div className="flex items-center justify-between">
-                    <button
-                        onClick={async (event) => {
-                            event.preventDefault();
+            <div className="flex justify-center w-full pt-8">
+                <div className="max-w-screen-lg w-full shadow-md rounded-lg p-6">
+                    <input
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        type="text"
+                        className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg block p-2.5 focus:outline-none mb-4"
+                        placeholder="Enter blog title"
+                    />
 
-                            try {
-                                const updateData = {
-                                    title: title,
-                                    content: content
-                                };
+                    <TextEditor
+                        value={content}
+                        onChange={(newContent) => setContent(newContent)}
+                    />
 
-                                const response = await axios.put(`${BACKEND_URL}/api/v1/blog/update/${id}`, updateData, {
-                                    headers: {
-                                        Authorization: `${localStorage.getItem("token")}`,
+                    <div className="flex justify-end  space-x-4 mt-4">
+                        <button
+                            onClick={async (event) => {
+                                event.preventDefault();
 
+                                try {
+                                    const updateData = {
+                                        title: title,
+                                        content: content
+                                    };
+
+                                    const response = await axios.put(`${BACKEND_URL}/api/v1/blog/update/${id}`, updateData, {
+                                        headers: {
+                                            Authorization: localStorage.getItem("token"),
+                                        }
+                                    });
+
+                                    if (response.status === 200) {
+                                        notifySuccess("Blog updated successfully");
+                                        navigate(`/blog/${id}`);
+                                    } else {
+                                        throw new Error("Failed to update blog");
                                     }
-                                });
-
-                                if (response.status === 200) {
-                                    notifySuccess("Blog updated successfully");
-                                    navigate(`/blog/${id}`);
-                                } else {
-                                    throw new Error("Failed to update blog");
+                                } catch (error) {
+                                    console.error("Error updating blog:", error);
+                                    notifyError("Failed to update blog. Please try again.");
                                 }
-                            } catch (error) {
-                                console.error("Error updating blog:", error);
-                                notifyError("Failed to update blog. Please try again.");
-                            }
-                        }}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none mt-4"
-                    >
-                        Update Post
-                    </button>
+                            }}
+                            className="bg-blue-500  hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none"
+                        >
+                            Update Post
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
