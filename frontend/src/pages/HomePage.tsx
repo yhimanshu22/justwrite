@@ -44,7 +44,7 @@ export const HomePage = () => {
 
                 {/* Start Reading button */}
                 <div className="mt-8 flex justify-center">
-                    <Link to="/blogs" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full inline-block transition duration-300">
+                    <Link to="/signup" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full inline-block transition duration-300">
                         Start Reading
                     </Link>
                 </div>
