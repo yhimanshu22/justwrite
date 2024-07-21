@@ -102,7 +102,7 @@ export const Publish = () => {
     );
 }
 
-function TextEditor({ value, onChange }: { value: string; onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void }) {
+export function TextEditor({ value, onChange }: { value: string; onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void }) {
     return (
         <div className="mt-2">
             <div className="w-full mb-4">

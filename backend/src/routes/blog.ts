@@ -4,7 +4,8 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { GoogleGenerativeAI } from '@google/generative-ai';
-//import { authMiddleware } from "../Authmiddleware";
+import { authMiddleware } from "../Authmiddleware";
+
 
 export const blogRouter = new Hono<{
     Bindings: {
@@ -17,29 +18,10 @@ export const blogRouter = new Hono<{
     }
 }>();
 
-//blogRouter.post('/*', authMiddleware)
-blogRouter.use("/*", async (c, next) => {
-    const authHeader = c.req.header("authorization") || "";
-    try {
-        const user = await verify(authHeader, c.env.JWT_SECRET);
-        if (user) {
-            c.set("userId", user.id);
-            await next();
-        } else {
-            c.status(403);
-            return c.json({
-                message: "You are not logged in"
-            })
-        }
-    } catch (e) {
-        c.status(403);
-        return c.json({
-            message: "You are not logged in"
-        })
-    }
-});
 
-blogRouter.post('/publish', async (c) => {
+
+
+blogRouter.post('/publish', authMiddleware, async (c) => {
     const body = await c.req.json();
     const { success } = createBlogInput.safeParse(body);
     if (!success) {
@@ -66,34 +48,112 @@ blogRouter.post('/publish', async (c) => {
         id: blog.id
     })
 })
-blogRouter.put('/', async (c) => {
+
+
+blogRouter.put('/update/:id', async (c) => {
+    const id = Number(c.req.param('id')); // Ensure ID is correctly parsed
+    const userId = c.get('userId'); // Get user ID from middleware context
     const body = await c.req.json();
+
+    // Initialize Prisma client
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    // Validate the input
     const { success } = updateBlogInput.safeParse(body);
     if (!success) {
-        c.status(411);
+        c.status(411); // Length Required - Appropriate status code for validation issues
         return c.json({
-            message: "Inputs not correct"
-        })
+            message: "Invalid inputs provided."
+        });
     }
+
+    try {
+        // Find the blog to check if it belongs to the user
+        const blog = await prisma.blog.findUnique({
+            where: {
+                id: id,
+            }
+        });
+
+        if (!blog || blog.authorId !== userId) {
+            c.status(403); // Forbidden - User is not authorized to update this blog
+            return c.json({
+                message: 'You are not authorized to update this blog.',
+            });
+        }
+
+        // Update the blog
+        const updatedBlog = await prisma.blog.update({
+            where: {
+                id: id,
+            },
+            data: {
+                title: body.title,
+                content: body.content,
+            }
+        });
+
+        return c.json({
+            id: updatedBlog.id
+        });
+    } catch (e) {
+        console.error(e); // Log the error for debugging
+        c.status(500); // Internal Server Error
+        return c.json({
+            message: "Error while updating blog post."
+        });
+    }
+});
+
+//delete route--------------
+
+blogRouter.delete('/delete/:id', authMiddleware, async (c) => {
+    const id = Number(c.req.param('id'));
+    const userId = c.get('userId'); // Get user ID from middleware context
 
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
 
-    const blog = await prisma.blog.update({
-        where: {
-            id: body.id
-        },
-        data: {
-            title: body.title,
-            content: body.content
-        }
-    })
+    try {
+        // Find the blog to check if it belongs to the user
+        const blog = await prisma.blog.findFirst({
+            where: {
+                id: id,
+                authorId: userId,
+            }
+        });
 
-    return c.json({
-        id: blog.id
-    })
-})
+        if (!blog) {
+            c.status(403);
+            return c.json({
+                message: 'You are not authorized to delete this blog',
+            });
+        }
+
+
+        await prisma.blog.delete({
+            where: {
+                id: id
+            }
+        });
+
+        return c.json({
+            message: 'Blog deleted successfully',
+        });
+    } catch (e) {
+        console.error('Error deleting blog:', e);
+        c.status(500);
+        return c.json({
+            message: 'Internal server error',
+        });
+    }
+});
+
+
+
 
 // Todo: add pagination
 blogRouter.get('/bulk', async (c) => {
@@ -140,7 +200,6 @@ blogRouter.get('/:id', async (c) => {
                 }
             }
         })
-
         return c.json({
             blog
         });
@@ -152,8 +211,9 @@ blogRouter.get('/:id', async (c) => {
     }
 })
 
-//top picks ---------------------->>
-// Route to get top picks
+
+// Route to get top picks---------------
+
 blogRouter.get('/top-picks', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -181,8 +241,9 @@ blogRouter.get('/top-picks', async (c) => {
 });
 
 
+
 // generate with ai------------------->
-blogRouter.post('/with-ai', async (c) => {
+blogRouter.post('/with-ai', authMiddleware, async (c) => {
     const genAI = new GoogleGenerativeAI(c.env.GEMINI_API_KEY || '');
 
     try {

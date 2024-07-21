@@ -13,6 +13,7 @@ import { Devops } from './tags/Devops';
 import { MachineLearning } from './tags/MachineLearning';
 import { AWS } from './tags/AWS';
 import { Cloudflare } from './tags/Cloudflare';
+import UpdateBlogPage from './pages/UpdateBlog';
 
 function App() {
 
@@ -33,7 +34,7 @@ function App() {
           <Route path="/tags/Node.js" element={<Nodejs />} />
           <Route path="/tags/AWS" element={<AWS />} />
           <Route path="/tags/Cloudflare" element={<Cloudflare />} />
-
+          <Route path="/blog/update/:id" element={<UpdateBlogPage />} />
 
         </Routes>
         <NotificationContainer />

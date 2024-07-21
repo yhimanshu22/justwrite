@@ -22,6 +22,10 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${endpoint}`, postInputs);
 
             const jwt = response.data;
+
+            //here i was getting problems 
+            //the error is i was getting forbidden 403 error-----
+
             localStorage.setItem("token", jwt);
             navigate("/blogs");
 

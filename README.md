@@ -58,4 +58,6 @@ What Features I Added:
 5.Logout Functionality: Implemented for secure session exit.  
 6.FullBlog Enhancements:  
    1.Added dropdown menu on the left.  
-   2.Included Top Picks, Recommended Blogs, and a Reading List on the right.  
+   2.Included Top Picks, Recommended Blogs, and a Reading List on the right.   
+7. Added delete functionality  
+8.    

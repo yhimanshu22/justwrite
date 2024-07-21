@@ -2,9 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faThumbsUp, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import { notifyError, notifySuccess } from "./Notification";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { notifyError, notifySuccess } from "./Notification";
 
 
 // Define the BlogCardProps interface
@@ -25,7 +25,7 @@ export const BlogCard = ({
     publishedDate
 }: BlogCardProps) => {
 
-
+    const navigate = useNavigate();
 
     const [isDropdownVisible, setDropdownVisible] = useState(false);
 
@@ -64,15 +64,37 @@ export const BlogCard = ({
 
                                 <div
                                     className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                    onClick={async () => { {/* logic for updates  */ } }}
-                                >Update</div>
+                                    onClick={() => navigate(`/blog/update/${id}`)}
+                                >
+                                    Update
+                                </div>
                                 <div
                                     className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                    onClick={async () => { {/* logic for delete  */ } }}
-                                >Delete</div>
+                                    onClick={async () => {
+                                        try {
+                                            const response = await axios.delete(`${BACKEND_URL}/api/v1/blog/delete/${id}`, {
+                                                headers: {
+                                                    Authorization: `${localStorage.getItem('token')}`,
+                                                },
+                                            });
 
+                                            if (response.status === 200) {
+                                                notifySuccess('Blog deleted successfully');
 
-
+                                                setTimeout(() => {
+                                                    navigate(0);
+                                                }, 1500);
+                                            } else {
+                                                throw new Error('Failed to delete blog');
+                                            }
+                                        } catch (error) {
+                                            console.error('Error deleting blog:', error);
+                                            notifyError('Failed to delete blog. Please try again.');
+                                        }
+                                    }}
+                                >
+                                    Delete
+                                </div>
                             </div>
                         )}
                     </div>
