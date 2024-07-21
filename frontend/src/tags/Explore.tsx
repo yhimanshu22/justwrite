@@ -2,12 +2,19 @@ import { useState } from "react";
 
 import { HomeTags } from "../components/HomeTags";
 
+interface CustomEvent extends Event {
+    target: HTMLInputElement;
+}
+
+
+
 export const Explore = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
-    const handleSearchChange = (e) => {
+    const handleSearchChange = (e: CustomEvent) => {
         setSearchQuery(e.target.value);
     };
+
 
     return (
         <>
