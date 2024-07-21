@@ -51,8 +51,9 @@ blogRouter.post('/publish', authMiddleware, async (c) => {
 
 
 blogRouter.put('/update/:id', async (c) => {
-    const id = Number(c.req.param('id')); // Ensure ID is correctly parsed
-    const userId = c.get('userId'); // Get user ID from middleware context
+    const id = Number(c.req.param('id'));
+
+    const userId = Number(c.get('userId')); // Get user ID from middleware context
     const body = await c.req.json();
 
     // Initialize Prisma client
