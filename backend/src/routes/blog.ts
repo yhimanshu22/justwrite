@@ -31,7 +31,7 @@ blogRouter.post('/publish', authMiddleware, async (c) => {
         })
     }
 
-    const authorId = c.get("userId");
+    const authorId = Number(c.get("userId"));
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
