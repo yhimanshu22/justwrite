@@ -39,8 +39,6 @@ export const Appbar = () => {
                     </button>
                 </Link>
 
-                <Avatar size={"big"} name="Himanshu" onLogout={handleLogout} />
-
                 <div className="ml-4">
                     <Link to="/signup">
                         <button type="button" className="ml-2 mr-1 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5">
@@ -48,6 +46,10 @@ export const Appbar = () => {
                         </button>
                     </Link>
                 </div>
+
+                <Avatar size={"big"} name="Himanshu" onLogout={handleLogout} />
+
+
             </div>
         </div>
     );

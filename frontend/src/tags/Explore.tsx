@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Appbar } from "../components/Appbar";
+
+import { HomeTags } from "../components/HomeTags";
 
 export const Explore = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -10,10 +11,10 @@ export const Explore = () => {
 
     return (
         <>
-            <Appbar />
+            <HomeTags />
             <div className="min-h-screen p-8 dark:bg-slate-800 dark:text-white">
                 <div className="text-center">
-                    <h1 className="text-4xl font-medium mb-8">Explore Topics</h1>
+                    <h1 className="text-4xl font-md mt-2 mb-8">Explore Topics</h1>
 
                     <div className="mb-8">
                         <input
