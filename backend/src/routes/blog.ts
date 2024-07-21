@@ -113,7 +113,7 @@ blogRouter.put('/update/:id', async (c) => {
 
 blogRouter.delete('/delete/:id', authMiddleware, async (c) => {
     const id = Number(c.req.param('id'));
-    const userId = c.get('userId'); // Get user ID from middleware context
+    const userId = Number(c.get('userId')); // Get user ID from middleware context
 
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
