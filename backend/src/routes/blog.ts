@@ -2,6 +2,7 @@ import { createBlogInput, updateBlogInput } from "@100xdevs/medium-common";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
+import { HfInference } from '@huggingface/inference';
 import { verify } from "hono/jwt";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { authMiddleware } from "../Authmiddleware";
@@ -242,52 +243,48 @@ blogRouter.get('/top-picks', async (c) => {
 });
 
 
-
-// generate with ai------------------->
 blogRouter.post('/with-ai', authMiddleware, async (c) => {
     const genAI = new GoogleGenerativeAI(c.env.GEMINI_API_KEY || '');
 
-    const maxRetries = 5; // Maximum number of retries for rate limiting
-    let attempt = 0;
+    try {
+        // Retrieve the generative model
+        const model = await genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-    while (attempt < maxRetries) {
-        try {
-            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-            const data = await c.req.json();
-            const prompt = `Write a blog post based on the title: "${data.title}". The content should be in plain text format and should not include any headings, titles, or special characters such as \`***\`. 
-
-            1. **Introduction**: Provide a brief introduction to the topic.
-            2. **Main Body**: 
-             - Divide the main body into multiple sections (at least 4) without using any headings or special formatting.
-             - Ensure the content flows logically from one section to the next.
-            3. **Conclusion**: 
-             - Summarize the key points.
-             - Include a call to action inviting readers to leave comments or share their thoughts.
-
-           Ensure that the content is cohesive, engaging, and free of any markdown or special formatting elements. Focus on creating a natural, readable text that aligns with the blog title and provides value to the readers.`;
-
-            const result = await model.generateContent(prompt);
-            let content = result; // Directly use the result
-
-            return c.json({ content: content }); // Return JSON response
-        } catch (error) {
-            if (error.status === 429) { // Check for rate limit error
-                attempt++;
-                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
-                console.log(`Rate limit exceeded. Retrying in ${waitTime / 1000} seconds...`);
-                await new Promise(resolve => setTimeout(resolve, waitTime)); // Wait before retrying
-            } else {
-                console.error('Error generating content:', error);
-                return c.json({ error: 'An error occurred while generating the blog post' }, { status: 500 });
-            }
+        // Parse request data
+        const data = await c.req.json();
+        if (!data.title) {
+            return new Response(
+                JSON.stringify({ error: 'Title is required in the request payload' }),
+                { status: 400 }
+            );
         }
+
+        // Define the prompt
+        const prompt = `Write a blog post based on the title: "${data.title}". 
+The content should:
+1. Include a brief introduction to the topic.
+2. Have a logically flowing main body divided into at least four sections without using headings or special formatting.
+3. End with a conclusion that summarizes key points and includes a call to action inviting readers to share their thoughts.
+Ensure the content is in plain text format, free of any markdown, headings, or special characters such as \`***\`. Make it engaging and valuable for the readers.`;
+
+        // Generate content without streaming
+        const result = await model.generateContent(prompt);
+        // Return the content
+        return new Response(JSON.stringify({ result }), {
+            headers: { 'Content-Type': 'application/json' },
+        });
+    } catch (error: any) {
+        if (error.status === 429) {
+            console.error('Rate limit exceeded:', error);
+            return new Response(
+                JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+                { status: 429, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+        console.error('Error generating content:', error);
+        return new Response(
+            JSON.stringify({ error: 'An error occurred while generating the blog post.' }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
     }
-
-    return c.json({ error: 'Max retries reached. Unable to generate content.' }, { status: 500 });
 });
-
-
-
-
-
