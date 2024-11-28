@@ -1,5 +1,5 @@
-import { BlogCard } from "../components/BlogCard";
-import { HomeTags } from "../components/HomeTags";
+import { BlogCard } from "../../components/BlogCard";
+import { HomeTags } from "../../components/HomeTags";
 
 const NodejsBlogs = [
     {

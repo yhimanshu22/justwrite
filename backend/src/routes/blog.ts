@@ -248,16 +248,10 @@ blogRouter.post('/with-ai', authMiddleware, async (c) => {
 
     try {
         // Retrieve the generative model
-        const model = await genAI.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
         // Parse request data
         const data = await c.req.json();
-        if (!data.title) {
-            return new Response(
-                JSON.stringify({ error: 'Title is required in the request payload' }),
-                { status: 400 }
-            );
-        }
 
         // Define the prompt
         const prompt = `Write a blog post based on the title: "${data.title}". 
@@ -267,12 +261,13 @@ The content should:
 3. End with a conclusion that summarizes key points and includes a call to action inviting readers to share their thoughts.
 Ensure the content is in plain text format, free of any markdown, headings, or special characters such as \`***\`. Make it engaging and valuable for the readers.`;
 
-        // Generate content without streaming
         const result = await model.generateContent(prompt);
+        console.log(result)
         // Return the content
         return new Response(JSON.stringify({ result }), {
             headers: { 'Content-Type': 'application/json' },
         });
+
     } catch (error: any) {
         if (error.status === 429) {
             console.error('Rate limit exceeded:', error);

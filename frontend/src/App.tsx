@@ -6,18 +6,18 @@ import { Blogs } from "./pages/Blogs";
 import { Publish } from './pages/Publish';
 import { HomePage } from './pages/HomePage';
 import NotificationContainer from './components/Notification';
-import { React } from './tags/React';
-import { JavaScript } from './tags/JavaScript';
-import { Nodejs } from './tags/Nodejs';
-import { Devops } from './tags/Devops';
-import { MachineLearning } from './tags/MachineLearning';
-import { AWS } from './tags/AWS';
-import { Cloudflare } from './tags/Cloudflare';
+import { React } from './pages/tags/React';
+import { JavaScript } from './pages/tags/JavaScript';
+import { Nodejs } from './pages/tags/Nodejs';
+import { Devops } from './pages/tags/Devops';
+import { MachineLearning } from './pages/tags/MachineLearning';
+import { AWS } from './pages/tags/AWS';
+import { Cloudflare } from './pages/tags/Cloudflare';
 import UpdateBlogPage from './pages/UpdateBlog';
-import { Politics } from './tags/Politics';
-import { Finance } from './tags/Finance';
-import { Career } from './tags/Career';
-import { Explore } from './tags/Explore';
+import { Politics } from './pages/tags/Politics';
+import { Finance } from './pages/tags/Finance';
+import { Career } from './pages/tags/Career';
+import { Explore } from './pages/tags/Explore';
 
 function App() {
 

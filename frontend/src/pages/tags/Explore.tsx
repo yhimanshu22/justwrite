@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
 
-import { HomeTags } from "../components/HomeTags";
+import { HomeTags } from "../../components/HomeTags";
 
 
 export const Explore = () => {
