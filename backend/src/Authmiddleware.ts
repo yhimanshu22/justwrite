@@ -2,6 +2,7 @@ import { Context, Next } from 'hono';
 import { verify } from 'hono/jwt';
 
 export async function authMiddleware(c: Context, next: Next) {
+
     const authHeader = c.req.header('authorization') || '';
 
     try {

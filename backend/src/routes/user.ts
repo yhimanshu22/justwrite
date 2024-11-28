@@ -28,6 +28,7 @@ userRouter.post('/signup', async (c) => {
       message: "Inputs not correct"
     })
   }
+
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
@@ -46,9 +47,8 @@ userRouter.post('/signup', async (c) => {
 
     return c.text(jwt)
   } catch (e) {
-    console.log(e);
     c.status(411);
-    return c.text('Invalid')
+    return c.text('Invalid user registration')
   }
 })
 
@@ -92,7 +92,7 @@ userRouter.post('/signin', async (c) => {
     return c.text(jwt)
 
   } catch (e) {
-    console.log(e);
+
     c.status(411);
     return c.text('Invalid')
   }
@@ -113,10 +113,10 @@ userRouter.get('/users/follow', async (c) => {
         username: true
       }
     });
-
+    console.log(users)
     return c.json(users);
   } catch (e) {
-    console.log(e);
+
     c.status(500);
     return c.json({
       message: 'Failed to fetch users'

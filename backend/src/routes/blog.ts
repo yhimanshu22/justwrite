@@ -20,7 +20,6 @@ export const blogRouter = new Hono<{
 
 
 
-
 blogRouter.post('/publish', authMiddleware, async (c) => {
     const body = await c.req.json();
     const { success } = createBlogInput.safeParse(body);
@@ -50,7 +49,7 @@ blogRouter.post('/publish', authMiddleware, async (c) => {
 })
 
 
-blogRouter.put('/update/:id', async (c) => {
+blogRouter.put('/update/:id', authMiddleware, async (c) => {
     const id = Number(c.req.param('id'));
 
     const userId = Number(c.get('userId')); // Get user ID from middleware context
