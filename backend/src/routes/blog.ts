@@ -247,39 +247,44 @@ blogRouter.get('/top-picks', async (c) => {
 blogRouter.post('/with-ai', authMiddleware, async (c) => {
     const genAI = new GoogleGenerativeAI(c.env.GEMINI_API_KEY || '');
 
-    try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const maxRetries = 5; // Maximum number of retries for rate limiting
+    let attempt = 0;
 
-        const data = await c.req.json();
-        const prompt = `Write a blog post based on the title: "${data.title}". The content should be in plain text format and should not include any headings, titles, or special characters such as \`***\`. 
+    while (attempt < maxRetries) {
+        try {
+            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-        1. **Introduction**: Provide a brief introduction to the topic.
-        2. **Main Body**: 
-         - Divide the main body into multiple sections (at least 4) without using any headings or special formatting.
-         - Ensure the content flows logically from one section to the next.
-        3. **Conclusion**: 
-         - Summarize the key points.
-         - Include a call to action inviting readers to leave comments or share their thoughts.
+            const data = await c.req.json();
+            const prompt = `Write a blog post based on the title: "${data.title}". The content should be in plain text format and should not include any headings, titles, or special characters such as \`***\`. 
 
-       Ensure that the content is cohesive, engaging, and free of any markdown or special formatting elements. Focus on creating a natural, readable text that aligns with the blog title and provides value to the readers.`;
+            1. **Introduction**: Provide a brief introduction to the topic.
+            2. **Main Body**: 
+             - Divide the main body into multiple sections (at least 4) without using any headings or special formatting.
+             - Ensure the content flows logically from one section to the next.
+            3. **Conclusion**: 
+             - Summarize the key points.
+             - Include a call to action inviting readers to leave comments or share their thoughts.
 
+           Ensure that the content is cohesive, engaging, and free of any markdown or special formatting elements. Focus on creating a natural, readable text that aligns with the blog title and provides value to the readers.`;
 
+            const result = await model.generateContent(prompt);
+            let content = result; // Directly use the result
 
-        const result = await model.generateContentStream(prompt);
-        const response = await result.response;
-
-
-        let content = await response.text();
-
-        content = content.replace(/##\s*/g, '').replace(/^\s*#\s*/gm, '');
-
-        return new Response(JSON.stringify({ content: content }));
-    } catch (error) {
-        console.error('Error generating content:', error);
-        return new Response(JSON.stringify({ error: 'An error occurred while generating the blog post' }), {
-            status: 500
-        });
+            return c.json({ content: content }); // Return JSON response
+        } catch (error) {
+            if (error.status === 429) { // Check for rate limit error
+                attempt++;
+                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
+                console.log(`Rate limit exceeded. Retrying in ${waitTime / 1000} seconds...`);
+                await new Promise(resolve => setTimeout(resolve, waitTime)); // Wait before retrying
+            } else {
+                console.error('Error generating content:', error);
+                return c.json({ error: 'An error occurred while generating the blog post' }, { status: 500 });
+            }
+        }
     }
+
+    return c.json({ error: 'Max retries reached. Unable to generate content.' }, { status: 500 });
 });
 
 
